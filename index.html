@@ -4,684 +4,668 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>SS2 ULTIMATE GIFT</title>
-    <style>
-        /* --- THE FORGE PALETTE --- */
-        :root {
-            --orange: #FF3C00;
-            --brown: #311D00;
-            --dark: #0a0a0a;
-            --glass: rgba(20, 20, 20, 0.98);
-            --text-main: #ffffff;
-            --text-muted: #888888;
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
-            --safe-top: env(safe-area-inset-top, 0px);
-        }
+    <title>SS2 OMNI-PLAYER – Queen Sheba Edition</title>
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            margin: 0; padding: 0;
-            background-color: #000;
-            /* CLEVELAND NIGHTS GRADIENT */
-            background-image: radial-gradient(circle at 50% 20%, #4a2c00 0%, #000000 70%);
-            color: var(--text-main);
-            font-family: system-ui, -apple-system, sans-serif;
-            height: 100dvh; 
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- IMPORT OVERLAY (THE LOADING SCREEN) --- */
-        #loading-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 1000;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .loader-box { width: 80%; max-width: 300px; text-align: center; }
-        .loader-text { font-weight: 900; font-size: 1.2rem; color: var(--orange); margin-bottom: 10px; letter-spacing: 2px; }
-        .progress-track { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: var(--orange); transition: width 0.2s; }
-
-        /* --- TOP NAVIGATION (MODES) --- */
-        .mode-switcher {
-            flex: 0 0 auto;
-            display: flex;
-            background: rgba(0,0,0,0.8);
-            border-bottom: 1px solid #333;
-            padding-top: var(--safe-top);
-            z-index: 50;
-        }
-        .mode-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #555;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .mode-tab.active {
-            color: var(--orange);
-            border-bottom: 3px solid var(--orange);
-            background: linear-gradient(180deg, transparent, rgba(255, 60, 0, 0.1));
-        }
-
-        /* --- MAIN STAGE (VIDEO & VIZ) --- */
-        #stage {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        canvas { width: 100%; height: 100%; display: block; }
-        video { width: 100%; height: 100%; object-fit: contain; display: none; }
+<style>
+    :root {
+        /* --- CLEVELAND BROWNS OFFICIAL HEX CODES --- */
+        --orange: #FF3C00;
+        --brown: #311D00;
+        --black: #050505;
+        --carbon: #121212;
+        --glass: rgba(18, 18, 18, 0.98);
         
-        /* Speed Popup Indicator */
-        #speed-toast {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 4rem; font-weight: 900; color: rgba(255,255,255,0.2);
-            pointer-events: none; opacity: 0; transition: opacity 0.5s;
-        }
+        /* --- LAYOUT SAFE ZONES --- */
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 20px);
+    }
 
-        /* --- CONTROL DECK --- */
-        .deck {
-            flex: 0 0 auto;
-            background: var(--glass);
-            border-top: 1px solid #333;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            padding-bottom: calc(20px + var(--safe-bottom));
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 60;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-        }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* Track Info */
-        .info-area { text-align: center; }
-        .track-name { 
-            font-size: 1.3rem; font-weight: 800; color: #fff; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            margin-bottom: 5px;
-        }
-        .track-meta { 
-            font-size: 0.75rem; color: var(--orange); font-weight: 700; 
-            letter-spacing: 1.5px; text-transform: uppercase; 
-        }
+    body {
+        margin: 0; padding: 0;
+        background-color: var(--black);
+        /* The Radial Gradient Background */
+        background-image: radial-gradient(circle at 50% 20%, #4a2c00 0%, #000000 70%);
+        color: white;
+        font-family: system-ui, -apple-system, sans-serif;
+        height: 100dvh; width: 100vw; overflow: hidden;
+        display: flex; flex-direction: column;
+    }
 
-        /* Scrubber */
-        .scrubber { display: flex; align-items: center; gap: 12px; font-family: monospace; font-size: 0.8rem; color: #777; }
-        input[type=range] {
-            flex: 1; -webkit-appearance: none; background: transparent; height: 30px;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px;
-            border-radius: 50%; background: var(--orange); margin-top: -6px;
-            box-shadow: 0 0 10px var(--orange);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; background: #333; border-radius: 2px;
-        }
+    /* --- SECTION: THE TABS (TOP) --- */
+    .tab-bar {
+        flex: 0 0 auto; display: flex;
+        background: rgba(0,0,0,0.8); border-bottom: 1px solid #333;
+        padding-top: var(--safe-top); z-index: 50;
+    }
+    .tab {
+        flex: 1; padding: 15px; text-align: center;
+        font-weight: 800; font-size: 0.8rem; color: #555;
+        text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .tab.active {
+        color: var(--orange); border-bottom: 3px solid var(--orange);
+        background: linear-gradient(180deg, transparent, rgba(255, 60, 0, 0.1));
+    }
 
-        /* Main Buttons */
-        .btn-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
-        
-        .btn {
-            background: #1a1a1a; border: none; color: #fff;
-            width: 55px; height: 55px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.1s;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn svg { fill: currentColor; width: 24px; height: 24px; }
-        
-        .btn-play {
-            width: 80px; height: 80px; background: var(--orange); color: #000;
-            box-shadow: 0 5px 20px rgba(255, 60, 0, 0.4);
-        }
-        .btn-play svg { width: 36px; height: 36px; }
+    /* --- SECTION: THE STAGE (MIDDLE) --- */
+    #stage {
+        flex: 1; position: relative; width: 100%;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+    video { width: 100%; height: 100%; object-fit: contain; display: none; }
+    
+    /* The "Resume Bookmark" Popup */
+    #resume-toast {
+        position: absolute; bottom: 20px;
+        background: var(--orange); color: black;
+        padding: 10px 20px; border-radius: 20px;
+        font-weight: bold; font-size: 0.9rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        display: none; cursor: pointer; animation: popUp 0.3s ease-out;
+    }
+    @keyframes popUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .btn-active { color: var(--orange); border: 1px solid var(--orange); }
+    /* --- SECTION: THE CONTROL DECK (BOTTOM) --- */
+    .deck {
+        flex: 0 0 auto;
+        background: var(--glass);
+        border-top: 1px solid #333;
+        border-radius: 20px 20px 0 0;
+        padding: 20px; padding-bottom: calc(20px + var(--safe-bottom));
+        display: flex; flex-direction: column; gap: 12px;
+        z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    }
 
-        /* Utility Buttons */
-        .util-row { display: flex; justify-content: space-between; margin-top: 5px; }
-        .pill-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid #333;
-            color: #aaa; padding: 8px 16px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: bold; cursor: pointer;
-        }
-        .pill-active { border-color: var(--orange); color: var(--orange); }
+    /* Track Info */
+    .info { text-align: center; }
+    .title { font-size: 1.3rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta { color: var(--orange); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 
-        /* --- LIBRARY DRAWER --- */
-        .drawer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 200;
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column;
-        }
-        .drawer.open { transform: translateY(0); }
+    /* High-Fi Switches */
+    .hifi-panel {
+        display: flex; gap: 8px; justify-content: center;
+        background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; border: 1px solid #333;
+    }
+    .hifi-btn {
+        background: #222; border: 1px solid #444; color: #777;
+        font-size: 0.65rem; font-weight: bold; padding: 8px 0;
+        border-radius: 4px; cursor: pointer; flex: 1; text-align: center;
+    }
+    .hifi-btn.active { 
+        background: #1a0f00; border-color: var(--orange); color: var(--orange); 
+        box-shadow: 0 0 10px var(--orange);
+    }
 
-        .drawer-header {
-            padding: 20px; padding-top: calc(20px + var(--safe-top));
-            background: #111; border-bottom: 1px solid #333;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .drawer-title { font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; }
+    /* Scrubber */
+    .scrub-row { display: flex; align-items: center; gap: 10px; font-family: monospace; font-size: 0.8rem; color: #666; }
+    input[type=range] { flex: 1; height: 30px; background: transparent; -webkit-appearance: none; }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+        background: var(--orange); margin-top: -6px; box-shadow: 0 0 10px var(--orange);
+    }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #333; }
 
-        .file-list { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
-        
-        .track-item {
-            padding: 16px; border-bottom: 1px solid #222;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .track-item.playing { 
-            background: #1a0f00; border-left: 4px solid var(--orange); 
-            color: var(--orange); 
-        }
-        
-        .drawer-footer {
-            padding: 20px; padding-bottom: calc(20px + var(--safe-bottom));
-            background: #111; border-top: 1px solid #333;
-        }
-        .action-btn {
-            width: 100%; padding: 18px; 
-            background: var(--orange); color: #000; 
-            border: none; border-radius: 10px;
-            font-weight: 900; font-size: 1rem; text-transform: uppercase;
-        }
-        
-        .empty-msg {
-            text-align: center; color: #555; margin-top: 50px;
-            border: 2px dashed #333; padding: 40px; border-radius: 10px;
-        }
+    /* Buttons */
+    .controls { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+    .btn {
+        width: 55px; height: 55px; border-radius: 50%; background: #1a1a1a;
+        border: none; color: #fff; display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+    }
+    .btn-play {
+        width: 80px; height: 80px; background: var(--orange); color: #000;
+        font-size: 2rem; box-shadow: 0 5px 20px rgba(255, 60, 0, 0.4);
+    }
+    /* Disabled State (For Shuffle in Books mode) */
+    .btn.disabled { opacity: 0.3; pointer-events: none; }
 
-    </style>
+    /* --- SECTION: THE LIBRARY DRAWER --- */
+    .drawer {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #000; z-index: 200; transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        display: flex; flex-direction: column;
+    }
+    .drawer.open { transform: translateY(0); }
+    
+    .drawer-head { 
+        padding: 20px; padding-top: calc(20px + var(--safe-top)); 
+        background: #111; border-bottom: 1px solid #333; 
+        display: flex; justify-content: space-between; align-items: center; 
+    }
+    .list { flex: 1; overflow-y: auto; padding: 10px; }
+    
+    .item { 
+        padding: 16px; border-bottom: 1px solid #222; 
+        display: flex; justify-content: space-between; align-items: center; 
+    }
+    .item.playing { border-left: 4px solid var(--orange); background: #1a0f00; color: var(--orange); }
+
+    .upload-zone { 
+        padding: 20px; background: #111; border-top: 1px solid #333; 
+        padding-bottom: calc(20px + var(--safe-bottom)); 
+    }
+    .btn-full { 
+        width: 100%; padding: 18px; background: var(--orange); color: #000; 
+        border: none; border-radius: 8px; font-weight: 900; font-size: 1rem; text-transform: uppercase; 
+    }
+    
+    /* Loading Overlay */
+    #loader { 
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.95); z-index: 500; display: none; 
+        flex-direction: column; justify-content: center; align-items: center; 
+    }
+    .load-bar-wrap { width: 70%; height: 4px; background: #333; margin-top: 15px; }
+    .load-bar-fill { height: 100%; width: 0%; background: var(--orange); transition: width 0.1s; }
+
+</style>
 </head>
 <body>
 
-    <div id="loading-overlay">
-        <div class="loader-box">
-            <div class="loader-text" id="loader-status">IMPORTING...</div>
-            <div class="progress-track"><div class="progress-bar" id="loader-bar"></div></div>
-        </div>
+<div id="loader">
+    <div style="color:var(--orange); font-weight:900; letter-spacing:2px;">IMPORTING TO VAULT...</div>
+    <div class="load-bar-wrap"><div class="load-bar-fill" id="load-bar"></div></div>
+</div>
+
+<div class="tab-bar">
+    <div class="tab active" onclick="APP.setMode('music')">Music</div>
+    <div class="tab" onclick="APP.setMode('video')">Video</div>
+    <div class="tab" onclick="APP.setMode('books')">Books</div>
+</div>
+
+<div id="stage">
+    <canvas id="viz"></canvas>
+    <video id="player-video" playsinline webkit-playsinline></video>
+    <div id="resume-toast" onclick="PLAYER.resumeBook()">RESUME LAST CHAPTER</div>
+</div>
+
+<div class="deck">
+    <div class="info">
+        <div class="title" id="ui-title">SS2 OMNI-MEDIA</div>
+        <div class="meta" id="ui-meta">LIBRARY EMPTY</div>
     </div>
 
-    <div class="mode-switcher">
-        <div class="mode-tab active" onclick="APP.setMode('music')">Music</div>
-        <div class="mode-tab" onclick="APP.setMode('video')">Video</div>
-        <div class="mode-tab" onclick="APP.setMode('books')">Books</div>
+    <div class="hifi-panel">
+        <div class="hifi-btn" id="btn-bass" onclick="AUDIO.toggleBass()">BASS BOOST</div>
+        <div class="hifi-btn" id="btn-vocal" onclick="AUDIO.toggleVocal()">VOCAL CLARITY</div>
+        <div class="hifi-btn" id="btn-comp" onclick="AUDIO.toggleComp()">LEVELER</div>
     </div>
 
-    <div id="stage">
-        <div id="speed-toast">1.0x</div>
-        <canvas id="viz"></canvas>
-        <video id="player-video" playsinline webkit-playsinline></video>
+    <div class="scrub-row">
+        <span id="t-curr">0:00</span>
+        <input type="range" id="seek" value="0" step="0.1">
+        <span id="t-dur">0:00</span>
     </div>
 
-    <div class="deck">
-        <div class="info-area">
-            <div class="track-name" id="ui-title">SS2 GIFT EDITION</div>
-            <div class="track-meta" id="ui-artist">LIBRARY EMPTY</div>
-        </div>
-
-        <div class="scrubber">
-            <span id="t-curr">0:00</span>
-            <input type="range" id="seek-bar" value="0" step="0.1">
-            <span id="t-dur">0:00</span>
-        </div>
-
-        <div class="btn-row">
-            <button class="btn" id="btn-shuffle" onclick="PLAYER.toggleShuffle()">
-                <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
-            </button>
-
-            <button class="btn" onclick="PLAYER.prev()">
-                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            </button>
-
-            <button class="btn btn-play" id="btn-play" onclick="PLAYER.togglePlay()">
-                <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="icon-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-
-            <button class="btn" onclick="PLAYER.next()">
-                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-            </button>
-
-            <button class="btn" id="btn-speed" onclick="PLAYER.toggleSpeed()" style="font-size:0.8rem; font-weight:900;">1x</button>
-        </div>
-
-        <div class="util-row">
-            <div style="font-size:0.7rem; color:#444; align-self:center;">PRO AUDIO ENGINE</div>
-            <button class="pill-btn pill-active" onclick="UI.toggleDrawer()">OPEN LIBRARY</button>
-        </div>
+    <!-- Volume row -->
+    <div class="scrub-row">
+        <span>VOL</span>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="1">
+        <span id="vol-label">100%</span>
     </div>
 
-    <div class="drawer" id="drawer">
-        <div class="drawer-header">
-            <div class="drawer-title">MEDIA VAULT</div>
-            <button class="pill-btn" onclick="UI.toggleDrawer()">CLOSE</button>
-        </div>
-
-        <div class="file-list" id="library-list">
-            </div>
-
-        <div class="drawer-footer">
-            <button class="action-btn" onclick="document.getElementById('file-input').click()">+ IMPORT MEDIA</button>
-            <div style="text-align:center; margin-top:15px;">
-                <span onclick="DB.wipe()" style="color:#d32f2f; font-size:0.75rem; text-decoration:underline; cursor:pointer;">FACTORY RESET</span>
-            </div>
-        </div>
+    <div class="controls">
+        <button class="btn" id="btn-shuf" onclick="PLAYER.toggleShuffle()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        </button>
+        
+        <button class="btn" onclick="PLAYER.prev()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        </button>
+        
+        <button class="btn btn-play" id="btn-play" onclick="PLAYER.togglePlay()">
+            <svg id="icon-play" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="icon-pause" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        
+        <button class="btn" onclick="PLAYER.next()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+        
+        <button class="btn" id="btn-spd" onclick="PLAYER.cycleSpeed()" style="font-size:0.8rem; font-weight:900;">1x</button>
     </div>
 
-    <input type="file" id="file-input" multiple accept="audio/*,video/*" style="display:none;" onchange="DB.ingest(this.files)">
+    <button onclick="UI.toggleDrawer()" style="background:transparent; border:1px solid #333; color:#666; padding:10px; border-radius:8px; font-size:0.7rem; font-weight:bold;">OPEN LIBRARY</button>
+</div>
+
+<div class="drawer" id="drawer">
+    <div class="drawer-head">
+        <span style="font-weight:900;">MEDIA VAULT</span>
+        <button onclick="UI.toggleDrawer()" style="background:none; border:1px solid #333; color:#fff; padding:5px 15px; border-radius:15px;">CLOSE</button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="upload-zone">
+        <button class="btn-full" onclick="document.getElementById('fileIn').click()">+ ADD MEDIA</button>
+        <div style="text-align:center; margin-top:15px;">
+            <span onclick="DB.wipe()" style="color:#d32f2f; font-size:0.7rem; text-decoration:underline; cursor:pointer;">FACTORY RESET</span>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="fileIn" multiple accept="audio/*,video/*" style="display:none;" onchange="DB.ingest(this.files)">
 
 <script>
-/**
- * SS2 ULTIMATE FORGE
- * - IndexedDB V2 (Fresh Store)
- * - Async Ingest Queue
- * - Full Player Logic (Shuffle, Speed, Auto-Next)
- * - Browns Visualizer
- */
+// --- HUMAN MAP (Sheba Edition) --------------------------------------
+// This page is a self-contained media center:
+//   - MUSIC: audio files with EQ + visualizer
+//   - VIDEO: video files with the same controls (no viz)
+//   - BOOKS: audio books with automatic position bookmarks
+//
+// Files are saved locally in the browser (IndexedDB).
+// You can safely change styling, text labels, or add new controls.
+// Core engine is in the JS below.
+// --------------------------------------------------------------------
 
-// --- GLOBAL STATE ---
+// --- SUB-CHAPTER A: STATE MANAGEMENT ---
 const STATE = {
-    mode: 'music',   // music | video | books
-    playlist: [],    // All files
-    filtered: [],    // Current view files
-    index: -1,       // Current index in filtered list
+    mode: 'music',   // 'music', 'video', 'books'
+    playlist: [],    // All files loaded from DB
+    filtered: [],    // Files visible in current tab
+    idx: -1,         // Current Index
     playing: false,
     shuffle: false,
     speed: 1.0,
-    audioCtx: null,
-    analyser: null
+    volume: 1.0,
+    bookmark: null   // Stores position for books
 };
 
-// --- DOM ELEMENTS ---
-const el = (id) => document.getElementById(id);
-const DOM = {
-    video: el('player-video'),
-    canvas: el('viz'),
-    title: el('ui-title'),
-    artist: el('ui-artist'),
-    seek: el('seek-bar'),
-    curr: el('t-curr'),
-    dur: el('t-dur'),
-    list: el('library-list'),
-    drawer: el('drawer'),
-    loader: el('loading-overlay'),
-    loadText: el('loader-status'),
-    loadBar: el('loader-bar'),
-    playBtn: el('btn-play'),
-    iconPlay: el('icon-play'),
-    iconPause: el('icon-pause'),
-    shufBtn: el('btn-shuffle'),
-    spdBtn: el('btn-speed'),
-    toast: el('speed-toast')
-};
+// DOM Shortcuts
+const el = id => document.getElementById(id);
+const vid = el('player-video');
+const volSlider = el('vol');
+const volLabel = el('vol-label');
 
-// --- DATABASE ENGINE (ROBUST) ---
+// --- SUB-CHAPTER B: THE DATABASE (IndexedDB) ---
 const DB = {
-    name: 'SS2_GIFT_FINAL',
-    version: 1,
+    name: 'SS2_OMNI_GIFT',
     db: null,
 
     init() {
-        const req = indexedDB.open(this.name, this.version);
-        req.onupgradeneeded = (e) => {
+        const r = indexedDB.open(this.name, 1);
+        r.onupgradeneeded = e => {
             const d = e.target.result;
-            if (!d.objectStoreNames.contains('media')) {
-                d.createObjectStore('media', { keyPath: 'id', autoIncrement: true });
+            if(!d.objectStoreNames.contains('media')) {
+                d.createObjectStore('media', {keyPath:'id', autoIncrement:true});
             }
         };
-        req.onsuccess = (e) => {
-            this.db = e.target.result;
-            this.loadLibrary();
+        r.onsuccess = e => { 
+            this.db = e.target.result; 
+            this.load(); 
         };
-        req.onerror = (e) => {
-            alert("DB ERROR: " + e.target.error + "\n\nTry hosting this file on Netlify to fix storage permissions.");
-        };
+        r.onerror = () => alert("DATABASE ERROR. Please host this file over http(s).");
     },
 
-    // ASYNC QUEUE INGEST (Prevents crashing)
-    async ingest(files) {
-        if (!files.length) return;
-        DOM.loader.style.display = 'flex';
-        
+    // ASYNC UPLOAD (PREVENTS CRASHES)
+    ingest(files) {
+        if(!files.length || !this.db) return;
+        el('loader').style.display = 'flex';
         const total = files.length;
         let count = 0;
-
-        // Use a transaction per batch or single transaction? 
-        // For safety against large files, we do sequential adds.
+        
         const tx = this.db.transaction(['media'], 'readwrite');
         const store = tx.objectStore('media');
 
-        tx.oncomplete = () => {
-            DOM.loader.style.display = 'none';
-            this.loadLibrary();
-            alert("Import Complete!");
-        };
-
-        tx.onerror = (e) => {
-            DOM.loader.style.display = 'none';
-            alert("Storage Limit Reached or File Too Large.\nBrowser blocked the save.");
-        };
-
-        // We process the file list
-        Array.from(files).forEach(file => {
-            store.add({
-                name: file.name,
-                data: file,
-                type: file.type,
-                date: new Date()
-            });
+        Array.from(files).forEach(f => {
+            const type = f.type.startsWith('video') ? 'video' : 'audio';
+            store.add({ name: f.name, data: f, type: type, date: new Date() });
             count++;
-            // Update UI (approximate since tx is async, but gives feedback)
-            DOM.loadText.innerText = `SAVING ${count} / ${total}`;
-            DOM.loadBar.style.width = (count / total) * 100 + "%";
+            el('load-bar').style.width = (count/total)*100 + "%";
         });
+
+        tx.oncomplete = () => {
+            el('loader').style.display = 'none';
+            this.load();
+        };
     },
 
-    loadLibrary() {
-        if (!this.db) return;
+    load() {
+        if(!this.db) return;
         const tx = this.db.transaction(['media'], 'readonly');
-        const store = tx.objectStore('media');
-        const req = store.getAll();
-
-        req.onsuccess = () => {
-            STATE.playlist = req.result || [];
-            APP.renderList();
+        tx.objectStore('media').getAll().onsuccess = e => {
+            STATE.playlist = e.target.result || [];
+            APP.render();
         };
     },
 
     wipe() {
-        if (confirm("PERMANENTLY DELETE ALL MUSIC?")) {
+        if(confirm("DELETE ALL MEDIA?")) {
             const tx = this.db.transaction(['media'], 'readwrite');
-            tx.objectStore('media').clear();
-            tx.oncomplete = () => window.location.reload();
+            tx.objectStore('media').clear().onsuccess = () => window.location.reload();
         }
     }
 };
 
-// --- APP LOGIC ---
-const APP = {
+// --- SUB-CHAPTER C: AUDIO ENGINE (High Fidelity) ---
+const AUDIO = {
+    ctx: null, src: null, an: null,
+    bass: null, vocal: null, comp: null,
+
     init() {
-        DB.init();
-        this.setMode('music');
+        if(this.ctx) return;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AC();
+        this.src = this.ctx.createMediaElementSource(vid);
+
+        // 1. BASS BOOST (LowShelf @ 100Hz)
+        this.bass = this.ctx.createBiquadFilter();
+        this.bass.type = 'lowshelf'; this.bass.frequency.value = 100; this.bass.gain.value = 0;
+
+        // 2. VOCAL CLARITY (Peaking @ 3000Hz)
+        this.vocal = this.ctx.createBiquadFilter();
+        this.vocal.type = 'peaking'; this.vocal.frequency.value = 3000; this.vocal.gain.value = 0;
+
+        // 3. LEVELER (Compressor)
+        this.comp = this.ctx.createDynamicsCompressor();
+        this.comp.threshold.value = 0; this.comp.ratio.value = 1;
+
+        // 4. ANALYZER (For Visuals)
+        this.an = this.ctx.createAnalyser();
+        this.an.fftSize = 128;
+
+        // Connect the Chain
+        this.src.connect(this.bass);
+        this.bass.connect(this.vocal);
+        this.vocal.connect(this.comp);
+        this.comp.connect(this.an);
+        this.an.connect(this.ctx.destination);
         
-        // Setup Video Events
-        DOM.video.addEventListener('timeupdate', PLAYER.updateSeek);
-        DOM.video.addEventListener('ended', PLAYER.autoNext);
-        DOM.seek.addEventListener('input', PLAYER.userSeek);
-        
-        // Viz Resize
-        window.addEventListener('resize', VIZ.resize);
+        VIZ.loop();
     },
 
-    setMode(mode) {
-        STATE.mode = mode;
+    toggleBass() {
+        if(!this.ctx) this.init();
+        const active = el('btn-bass').classList.toggle('active');
+        this.bass.gain.setTargetAtTime(active ? 15 : 0, this.ctx.currentTime, 0.1);
+    },
+    toggleVocal() {
+        if(!this.ctx) this.init();
+        const active = el('btn-vocal').classList.toggle('active');
+        this.vocal.gain.setTargetAtTime(active ? 8 : 0, this.ctx.currentTime, 0.1);
+    },
+    toggleComp() {
+        if(!this.ctx) this.init();
+        const active = el('btn-comp').classList.toggle('active');
+        this.comp.threshold.setValueAtTime(active ? -24 : 0, this.ctx.currentTime);
+        this.comp.ratio.setValueAtTime(active ? 12 : 1, this.ctx.currentTime);
+    }
+};
+
+// --- SUB-CHAPTER D: PLAYER LOGIC ---
+const PLAYER = {
+    load(i) {
+        if(!STATE.filtered[i]) return;
+        STATE.idx = i;
+        const t = STATE.filtered[i];
+        
+        // Load Blob
+        vid.src = URL.createObjectURL(t.data);
+        vid.playbackRate = STATE.speed;
+        vid.volume = STATE.volume;
+
+        vid.play().then(() => {
+            STATE.playing = true;
+            UI.updatePlayBtn();
+            AUDIO.init();
+            updateMediaSession(t);
+        }).catch(console.log);
+
+        el('ui-title').innerText = t.name;
+        el('ui-meta').innerText = STATE.mode.toUpperCase();
+        
+        APP.render(); 
+        UI.toggleDrawer();
+
+        // Check for Bookmark if in Book Mode
+        if(STATE.mode === 'books') {
+            const saved = localStorage.getItem('SS2_BOOK_' + t.name);
+            if(saved) {
+                STATE.bookmark = parseFloat(saved);
+                el('resume-toast').style.display = 'block';
+                setTimeout(() => el('resume-toast').style.display = 'none', 5000);
+            }
+        }
+    },
+
+    togglePlay() {
+        if(STATE.playing) { 
+            vid.pause(); 
+            STATE.playing = false; 
+        } else { 
+            AUDIO.init(); 
+            vid.play(); 
+            STATE.playing = true; 
+        }
+        UI.updatePlayBtn();
+    },
+
+    next() {
+        if(!STATE.filtered.length) return;
+        
+        // If Shuffle is ON (and NOT in Book mode), pick random
+        if(STATE.shuffle && STATE.mode !== 'books') {
+            STATE.idx = Math.floor(Math.random() * STATE.filtered.length);
+        } else {
+            STATE.idx = (STATE.idx + 1) % STATE.filtered.length;
+        }
+        this.load(STATE.idx);
+    },
+
+    prev() {
+        if(!STATE.filtered.length) return;
+        STATE.idx = (STATE.idx - 1 + STATE.filtered.length) % STATE.filtered.length;
+        this.load(STATE.idx);
+    },
+
+    toggleShuffle() {
+        // Shuffle forbidden in Books mode
+        if(STATE.mode === 'books') return;
+        
+        STATE.shuffle = !STATE.shuffle;
+        el('btn-shuf').style.color = STATE.shuffle ? 'var(--orange)' : '#fff';
+    },
+
+    cycleSpeed() {
+        const s = [1.0, 1.25, 1.5, 2.0];
+        STATE.speed = s[(s.indexOf(STATE.speed)+1)%4];
+        vid.playbackRate = STATE.speed;
+        el('btn-spd').innerText = STATE.speed + "x";
+        localStorage.setItem('SS2_SPEED', STATE.speed.toString());
+    },
+
+    resumeBook() {
+        if(STATE.bookmark) {
+            vid.currentTime = STATE.bookmark;
+            el('resume-toast').style.display = 'none';
+        }
+    },
+
+    saveProgress() {
+        if(STATE.mode === 'books' && STATE.playing) {
+            const t = STATE.filtered[STATE.idx];
+            if(t) localStorage.setItem('SS2_BOOK_' + t.name, vid.currentTime);
+        }
+    }
+};
+
+// --- SUB-CHAPTER E: VISUALIZER ---
+const VIZ = {
+    loop() {
+        requestAnimationFrame(() => this.loop());
+        // Skip draw if video mode (save battery)
+        if(STATE.mode === 'video') return;
+
+        const c = el('viz');
+        const ctx = c.getContext('2d');
+        c.width = c.parentElement.offsetWidth; 
+        c.height = c.parentElement.offsetHeight;
+
+        ctx.fillStyle = '#000'; ctx.fillRect(0,0,c.width,c.height);
+
+        if(!AUDIO.an) return;
+        const data = new Uint8Array(AUDIO.an.frequencyBinCount);
+        AUDIO.an.getByteFrequencyData(data);
+        
+        const w = c.width / data.length;
+        data.forEach((d, i) => {
+            const h = (d/255) * c.height;
+            // Browns Gradient
+            const g = ctx.createLinearGradient(0, c.height, 0, c.height - h);
+            g.addColorStop(0, '#311D00');
+            g.addColorStop(0.5, '#FF3C00');
+            g.addColorStop(1, '#FFF');
+            ctx.fillStyle = g;
+            ctx.fillRect(i*w, c.height - h, w-1, h);
+        });
+    }
+};
+
+// --- SUB-CHAPTER F: APP & UI LOGIC ---
+const APP = {
+    setMode(m) {
+        STATE.mode = m;
+        localStorage.setItem('SS2_MODE', m);
         
         // Update Tabs
-        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.mode-tab[onclick="APP.setMode('${mode}')"]`).classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        const activeTab = document.querySelector(`.tab[onclick="APP.setMode('${m}')"]`);
+        if(activeTab) activeTab.classList.add('active');
 
-        // Toggle Stage
-        if (mode === 'video') {
-            DOM.canvas.style.display = 'none';
-            DOM.video.style.display = 'block';
+        // Toggle Video Screen vs Viz
+        el('viz').style.display = m === 'video' ? 'none' : 'block';
+        el('player-video').style.display = m === 'video' ? 'block' : 'none';
+
+        // Shuffle Logic: Disable in books
+        if(m === 'books') {
+            el('btn-shuf').classList.add('disabled');
+            el('btn-shuf').style.opacity = 0.2;
         } else {
-            DOM.canvas.style.display = 'block';
-            DOM.video.style.display = 'none';
-            VIZ.start();
+            el('btn-shuf').classList.remove('disabled');
+            el('btn-shuf').style.opacity = 1;
         }
 
-        this.renderList();
+        this.render();
     },
 
-    getFilteredList() {
-        return STATE.playlist.filter(item => {
-            if (STATE.mode === 'video') return item.type.startsWith('video');
-            return item.type.startsWith('audio');
+    render() {
+        // Filter Playlist based on Mode
+        STATE.filtered = STATE.playlist.filter(f => {
+            if(STATE.mode === 'video') return f.type === 'video';
+            // Both Music and Books use 'audio' files
+            return f.type === 'audio';
         });
-    },
 
-    renderList() {
-        STATE.filtered = this.getFilteredList();
-        const listEl = DOM.list;
-        
-        if (STATE.filtered.length === 0) {
-            listEl.innerHTML = `<div class="empty-msg">NO MEDIA FOUND<br>TAP + IMPORT MEDIA</div>`;
+        const l = el('list');
+        if(!STATE.filtered.length) {
+            l.innerHTML = `<div style="text-align:center; padding:40px; color:#555;">NO MEDIA FOUND<br>FOR ${STATE.mode.toUpperCase()}</div>`;
             return;
         }
-
-        listEl.innerHTML = STATE.filtered.map((track, i) => `
-            <div class="track-item ${STATE.index === i ? 'playing' : ''}" onclick="PLAYER.load(${i})">
-                <div style="overflow:hidden;">
-                    <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${track.name}</div>
-                    <div style="font-size:0.75rem; opacity:0.6; margin-top:2px;">
-                        ${(track.data.size / 1024 / 1024).toFixed(1)} MB • ${STATE.mode.toUpperCase()}
-                    </div>
-                </div>
+        
+        l.innerHTML = STATE.filtered.map((t, i) => `
+            <div class="item ${STATE.idx === i ? 'playing' : ''}" onclick="PLAYER.load(${i})">
+                <div style="font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${t.name}</div>
+                <div style="font-size:0.7rem; opacity:0.7;">${(t.data.size/1024/1024).toFixed(1)}MB</div>
             </div>
         `).join('');
     }
 };
 
-// --- PLAYER ENGINE ---
-const PLAYER = {
-    load(index) {
-        if (!STATE.filtered[index]) return;
-        
-        STATE.index = index;
-        const track = STATE.filtered[index];
-        const url = URL.createObjectURL(track.data);
-        
-        DOM.video.src = url;
-        DOM.video.playbackRate = STATE.speed;
-        DOM.video.load();
-        
-        // Update Meta
-        DOM.title.innerText = track.name;
-        DOM.artist.innerText = STATE.mode.toUpperCase();
-        
-        // Highlight in Drawer
-        APP.renderList();
-        
-        // Play
-        this.play();
-        UI.toggleDrawer(false); // Close drawer
-    },
-
-    play() {
-        const p = DOM.video.play();
-        if (p !== undefined) {
-            p.then(() => {
-                STATE.playing = true;
-                this.updatePlayBtn();
-                VIZ.initCtx(); // Start Audio Context
-            }).catch(e => console.error("Play prevented", e));
-        }
-    },
-
-    pause() {
-        DOM.video.pause();
-        STATE.playing = false;
-        this.updatePlayBtn();
-    },
-
-    togglePlay() {
-        if (STATE.playing) this.pause();
-        else this.play();
-    },
-
-    updatePlayBtn() {
-        if (STATE.playing) {
-            DOM.iconPlay.style.display = 'none';
-            DOM.iconPause.style.display = 'block';
-        } else {
-            DOM.iconPlay.style.display = 'block';
-            DOM.iconPause.style.display = 'none';
-        }
-    },
-
-    next() {
-        if (!STATE.filtered.length) return;
-        
-        if (STATE.shuffle) {
-            // Random index
-            STATE.index = Math.floor(Math.random() * STATE.filtered.length);
-        } else {
-            STATE.index++;
-            if (STATE.index >= STATE.filtered.length) STATE.index = 0; // Loop
-        }
-        this.load(STATE.index);
-    },
-
-    prev() {
-        if (!STATE.filtered.length) return;
-        
-        STATE.index--;
-        if (STATE.index < 0) STATE.index = STATE.filtered.length - 1;
-        this.load(STATE.index);
-    },
-
-    autoNext() {
-        // Triggered when video/audio ends
-        PLAYER.next();
-    },
-
-    toggleShuffle() {
-        STATE.shuffle = !STATE.shuffle;
-        if (STATE.shuffle) DOM.shufBtn.classList.add('btn-active');
-        else DOM.shufBtn.classList.remove('btn-active');
-    },
-
-    toggleSpeed() {
-        const speeds = [1.0, 1.25, 1.5, 2.0];
-        let idx = speeds.indexOf(STATE.speed);
-        idx = (idx + 1) % speeds.length;
-        STATE.speed = speeds[idx];
-        
-        DOM.video.playbackRate = STATE.speed;
-        DOM.spdBtn.innerText = STATE.speed + "x";
-        
-        // Toast
-        DOM.toast.innerText = STATE.speed + "x";
-        DOM.toast.style.opacity = 1;
-        setTimeout(() => DOM.toast.style.opacity = 0, 800);
-    },
-
-    updateSeek() {
-        if (!DOM.video.duration) return;
-        const pct = (DOM.video.currentTime / DOM.video.duration) * 100;
-        DOM.seek.value = pct;
-        DOM.curr.innerText = fmtTime(DOM.video.currentTime);
-        DOM.dur.innerText = fmtTime(DOM.video.duration);
-    },
-
-    userSeek(e) {
-        const time = (e.target.value / 100) * DOM.video.duration;
-        DOM.video.currentTime = time;
-    }
-};
-
-// --- VISUALIZER ---
-const VIZ = {
-    ctx: null, // AudioContext
-    src: null,
-    an: null,  // Analyser
-
-    initCtx() {
-        if (this.ctx) return;
-        const AC = window.AudioContext || window.webkitAudioContext;
-        this.ctx = new AC();
-        this.an = this.ctx.createAnalyser();
-        this.an.fftSize = 64; // Low FFT for chunky bars
-        
-        this.src = this.ctx.createMediaElementSource(DOM.video);
-        this.src.connect(this.an);
-        this.an.connect(this.ctx.destination);
-        
-        this.resize();
-        this.loop();
-    },
-
-    resize() {
-        const r = document.getElementById('stage').getBoundingClientRect();
-        DOM.canvas.width = r.width;
-        DOM.canvas.height = r.height;
-    },
-
-    start() {
-        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
-    },
-
-    loop() {
-        requestAnimationFrame(() => this.loop());
-        if (STATE.mode === 'video') return;
-
-        const ctx = DOM.canvas.getContext('2d');
-        const w = DOM.canvas.width;
-        const h = DOM.canvas.height;
-        
-        // Get Data
-        const data = new Uint8Array(this.an ? this.an.frequencyBinCount : 0);
-        if (this.an) this.an.getByteFrequencyData(data);
-
-        // Clear
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, w, h);
-
-        // Draw Bars
-        const barWidth = (w / data.length) * 2.5;
-        let x = 0;
-
-        for (let i = 0; i < data.length; i++) {
-            const barHeight = (data[i] / 255) * h;
-            
-            // Browns Gradient: Dark Brown -> Orange -> White Tip
-            const grad = ctx.createLinearGradient(0, h, 0, h - barHeight);
-            grad.addColorStop(0, '#311D00');
-            grad.addColorStop(0.6, '#FF3C00');
-            grad.addColorStop(1, '#ffffff');
-
-            ctx.fillStyle = grad;
-            // Draw
-            ctx.fillRect(x, h - barHeight, barWidth - 2, barHeight);
-            
-            x += barWidth;
-        }
-    }
-};
-
-// --- UI UTILS ---
 const UI = {
-    toggleDrawer(force) {
-        if (force === false) DOM.drawer.classList.remove('open');
-        else DOM.drawer.classList.toggle('open');
+    toggleDrawer: () => el('drawer').classList.toggle('open'),
+    updatePlayBtn: () => {
+        el('icon-play').style.display = STATE.playing ? 'none' : 'block';
+        el('icon-pause').style.display = STATE.playing ? 'block' : 'none';
     }
 };
 
-function fmtTime(s) {
-    if (!s || isNaN(s)) return "0:00";
-    let m = Math.floor(s / 60);
-    let sec = Math.floor(s % 60);
-    return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+// --- SUB-CHAPTER G: MEDIA SESSION (Lock-screen controls) ---
+function updateMediaSession(track) {
+    if (!('mediaSession' in navigator) || !track) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.name,
+        artist: STATE.mode.toUpperCase(),
+        album: 'SS2 OMNI-PLAYER – Queen Sheba Edition'
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => {
+        if (!STATE.playing) PLAYER.togglePlay();
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+        if (STATE.playing) PLAYER.togglePlay();
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => PLAYER.prev());
+    navigator.mediaSession.setActionHandler('nexttrack', () => PLAYER.next());
 }
 
-// --- BOOT ---
-window.onload = APP.init.bind(APP);
+// --- EVENTS ---
+vid.ontimeupdate = () => {
+    if(vid.duration) {
+        el('seek').value = (vid.currentTime/vid.duration)*100;
+        let m = Math.floor(vid.currentTime/60), s = Math.floor(vid.currentTime%60);
+        el('t-curr').innerText = `${m}:${s<10?'0':''}${s}`;
+        
+        // Save Book Progress every update
+        PLAYER.saveProgress();
 
+        let dm = Math.floor(vid.duration/60), ds = Math.floor(vid.duration%60);
+        el('t-dur').innerText = `${dm}:${ds<10?'0':''}${ds}`;
+    }
+};
+vid.onended = () => PLAYER.next();
+el('seek').oninput = e => {
+    if(vid.duration) vid.currentTime = (e.target.value/100)*vid.duration;
+};
+
+// Volume slider events
+volSlider.oninput = e => {
+    const v = parseFloat(e.target.value);
+    STATE.volume = v;
+    vid.volume = v;
+    volLabel.innerText = Math.round(v*100) + "%";
+    localStorage.setItem('SS2_VOL', v.toString());
+};
+
+// Keyboard shortcuts (desktop)
+document.addEventListener('keydown', e => {
+    // avoid interfering with text inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        PLAYER.togglePlay();
+    } else if (e.code === 'ArrowRight') {
+        if (vid.duration) vid.currentTime = Math.min(vid.duration, vid.currentTime + 5);
+    } else if (e.code === 'ArrowLeft') {
+        if (vid.duration) vid.currentTime = Math.max(0, vid.currentTime - 5);
+    }
+});
+
+// BOOT UP
+window.onload = () => {
+    // Restore mode / speed / volume from previous session
+    const savedMode = localStorage.getItem('SS2_MODE');
+    const savedSpeed = parseFloat(localStorage.getItem('SS2_SPEED') || '1');
+    const savedVol = parseFloat(localStorage.getItem('SS2_VOL') || '1');
+
+    if(savedMode) STATE.mode = savedMode;
+    STATE.speed = isNaN(savedSpeed) ? 1 : savedSpeed;
+    STATE.volume = isNaN(savedVol) ? 1 : savedVol;
+
+    el('btn-spd').innerText = STATE.speed + "x";
+    vid.playbackRate = STATE.speed;
+
+    volSlider.value = STATE.volume;
+    volLabel.innerText = Math.round(STATE.volume*100) + "%";
+    vid.volume = STATE.volume;
+
+    APP.setMode(STATE.mode);
+    DB.init();
+};
 </script>
 </body>
 </html>
